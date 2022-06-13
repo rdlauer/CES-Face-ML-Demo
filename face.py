@@ -64,23 +64,36 @@ while True:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # Detect the faces
     faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+    # Add text around each face
+    font = cv2.FONT_HERSHEY_DUPLEX
+    fontScale = 1
+    color = (0, 0, 255)
+    thickness = 2
     # Draw the rectangle around each face
     for (x, y, w, h) in faces:
-        cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
+        cv2.rectangle(img, (x, y), (x+w, y+h), color, 2)
+        face_plural = 's'
+        if face_count is 1:
+            face_plural = ''
+        cv2.putText(img, str(face_count) + ' face' + face_plural + ' found!', (x, y-10), font, 
+                   fontScale, color, thickness, cv2.LINE_AA)
+        
     # Display
     cv2.imshow('img', img)
     
     if len(faces) > 0:
-        # check to make sure it's been at least two seconds since the last time we checked for faces
-        if current_seconds - start_secs_face >= 2:
+        # check to make sure it's been at least three seconds since the last time we checked for faces
+        if current_seconds - start_secs_face >= 3:
             face_count += len(faces)
-            print("We found some faces: " + str(len(faces)) + " to be exact! (Pending sync: " + str(face_count) + ")")
+            print("We found some faces: " + str(len(faces)) + " to be exact! (Pending sync: " + str(face_count) + " faces)")
             start_secs_face = int(round(time.time()))
     
     # create an outbound note every 5 minutes with accumulated face counts
-    if current_seconds - start_secs_note >= 300:
+    if current_seconds - start_secs_note >= 60:
         send_note(face_count)
+        print("####################")
         print("Sending a new note with " + str(face_count) + " faces.")
+        print("####################")
         face_count = 0
         start_secs_note = int(round(time.time()))
     
