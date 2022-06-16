@@ -78,8 +78,10 @@ while True:
         cv2.putText(img, str(face_count) + ' face' + face_plural + ' found!', (x, y-10), font, 
                    fontScale, color, thickness, cv2.LINE_AA)
         
-    # Display
-    cv2.imshow('img', img)
+    # Display in window
+    cv2.namedWindow('win', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('win', 900, 700)
+    cv2.imshow('win', img)
     
     if len(faces) > 0:
         # check to make sure it's been at least three seconds since the last time we checked for faces
